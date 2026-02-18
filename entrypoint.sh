@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "OPENROUTER_API_KEY length: ${#OPENROUTER_API_KEY}"
+
 mkdir -p /root/.picoclaw
 
 cat <<EOF > /root/.picoclaw/config.json
@@ -18,4 +20,6 @@ cat <<EOF > /root/.picoclaw/config.json
 }
 EOF
 
-picoclaw gateway
+export PORT=${PORT:-18790}
+
+exec picoclaw gateway --port $PORT
