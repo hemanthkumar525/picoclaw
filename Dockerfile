@@ -7,31 +7,22 @@ RUN apk add --no-cache git make
 
 WORKDIR /src
 
-# Cache dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy source and build
 COPY . .
 RUN make build
 
 # ============================================================
-# Stage 2: Minimal runtime image
+# Stage 2: Runtime
 # ============================================================
 FROM alpine:3.23
 
 RUN apk add --no-cache ca-certificates tzdata curl
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -q --spider http://localhost:18790/health || exit 1
-
-# Copy binary
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
+COPY entrypoint.sh /entrypoint.sh
 
-# Create picoclaw home directory
-RUN /usr/local/bin/picoclaw onboard && \
-    sed -i 's/"model": "glm-4.7"/"model": "anthropic\/claude-3-haiku"/' /root/.picoclaw/config.json
+RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["picoclaw"]
-CMD ["gateway"]
+ENTRYPOINT ["/entrypoint.sh"]
