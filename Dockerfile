@@ -30,7 +30,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
 # Create picoclaw home directory
-RUN /usr/local/bin/picoclaw onboard
+RUN /usr/local/bin/picoclaw onboard && \
+    sed -i 's/"model": "glm-4.7"/"model": "anthropic\/claude-3-haiku"/' /root/config.example.json
 
 ENTRYPOINT ["picoclaw"]
 CMD ["gateway"]
