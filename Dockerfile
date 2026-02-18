@@ -31,7 +31,7 @@ COPY --from=builder /src/build/picoclaw /usr/local/bin/picoclaw
 
 # Create picoclaw home directory
 RUN /usr/local/bin/picoclaw onboard && \
-    sed -i 's/"model": "glm-4.7"/"model": "anthropic\/claude-3-haiku"/' /root/.picoclaw/config.example.json
+    sed -i 's/"model": "glm-4.7"/"model": "anthropic\/claude-3-haiku"/' /root/.picoclaw/config.json
 
 ENTRYPOINT ["picoclaw"]
 CMD ["gateway"]
